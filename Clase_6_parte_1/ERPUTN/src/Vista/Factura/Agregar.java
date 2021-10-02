@@ -1,0 +1,602 @@
+package Vista.Factura;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+import Vista.Cliente.*;
+import Entidad.Cliente;
+import Entidad.DetalleFactura;
+import Entidad.Factura;
+import Entidad.Producto;
+import Logica.ClienteLogica;
+import Logica.FacturaLogica;
+import Logica.ProductoLogica;
+import Vista.*;
+import Vista.Producto.Buscar;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Ricardo
+ */
+public class Agregar extends AgregarMain {
+
+    /**
+     * @return the producto
+     */
+    public Producto getProducto() {
+        return producto;
+    }
+
+    /**
+     * @param producto the producto to set
+     */
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    /**
+     * @return the aceptar
+     */
+    public boolean isAceptar() {
+        return aceptar;
+    }
+
+    /**
+     * @param aceptar the aceptar to set
+     */
+    public void setAceptar(boolean aceptar) {
+        this.aceptar = aceptar;
+    }
+
+    private boolean aceptar = false;
+    private List<DetalleFactura> detallesFactura;
+    private Producto producto;
+    private Cliente cliente;
+
+    /**
+     * Creates new form AgregarMain
+     */
+    public Agregar() {
+        super();
+        initComponents();
+        this.SetDatos();
+    }
+
+    public void SetDatos() {
+        this.setTitle("Agregar Factura");
+        this.setLblTitle("Factura");
+        detallesFactura = new ArrayList<DetalleFactura>();
+        LocalDateTime date = LocalDateTime.now();
+        txtFecha.setText(date + "");
+    }
+
+    public void CargarDatos() {
+        jTable1 = new javax.swing.JTable() {
+            public boolean editCellAt(int row, int column, java.util.EventObject e) {
+                return false;
+            }
+        };;
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Linea", "Producto", "Cantidad", "Descuento", "Precio Unitario", "Total"
+                }
+        ));
+
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        jTable1.setUpdateSelectionOnSort(false);
+
+        jTable1.setVerifyInputWhenFocusTarget(false);
+
+        jScrollPane2.setViewportView(jTable1);
+
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+        }
+
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        int rowCount = modelo.getRowCount();
+        //Remove rows one by one from the end of the table
+        for (int i = rowCount - 1; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+
+        for (int i = 0; i < detallesFactura.size(); i++) {
+            Object[] fila = new Object[6];
+            fila[0] = ((DetalleFactura) detallesFactura.get(i)).getLinea();
+            fila[1] = ((DetalleFactura) detallesFactura.get(i)).getProducto().getNombre();
+            fila[2] = ((DetalleFactura) detallesFactura.get(i)).getCantidad();
+            fila[3] = ((DetalleFactura) detallesFactura.get(i)).getDescuento();
+            fila[4] = ((DetalleFactura) detallesFactura.get(i)).getPrecio_unitario();
+            fila[5] = ((DetalleFactura) detallesFactura.get(i)).getTotal();
+            modelo.addRow(fila);
+        }
+        jTable1.setModel(modelo);
+
+        float exento = 0;
+        float gravado = 0;
+        float subTotal = 0;
+
+        for (int i = 0; i < detallesFactura.size(); i++) {
+
+            if (detallesFactura.get(i).getProducto().getImpuesto() <= 0) {
+                exento += detallesFactura.get(i).getTotal();
+                subTotal += detallesFactura.get(i).getTotal();
+            }
+
+            if (detallesFactura.get(i).getProducto().getImpuesto() > 0) {
+                subTotal += detallesFactura.get(i).getTotal();
+
+                gravado += detallesFactura.get(i).getTotal()
+                        * detallesFactura.get(i).getProducto().getImpuesto();
+            }
+        }
+
+        lblExentoTexto.setText(" ₡ " + exento + "");
+        lblGravadoTexto.setText(" ₡ " + gravado + "");
+        lblSubtotalTexto.setText(" ₡ " + subTotal + "");
+        lblTotalTexto.setText(" ₡ " + (subTotal + gravado) + "");
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lblNombre = new javax.swing.JLabel();
+        lblNombre1 = new javax.swing.JLabel();
+        txtCliente = new javax.swing.JTextField();
+        btnAceptar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        txtProducto = new javax.swing.JTextField();
+        txtCantidad = new javax.swing.JTextField();
+        lblNombre3 = new javax.swing.JLabel();
+        btnAgregarCantidad = new javax.swing.JButton();
+        btnBusquedaCliente = new javax.swing.JButton();
+        lblNombre4 = new javax.swing.JLabel();
+        btnBusquedaProducto = new javax.swing.JButton();
+        lblCliente = new javax.swing.JLabel();
+        txtFecha = new javax.swing.JTextField();
+        lblCliente1 = new javax.swing.JLabel();
+        lblTotalTexto = new javax.swing.JLabel();
+        lblCliente2 = new javax.swing.JLabel();
+        lblCliente3 = new javax.swing.JLabel();
+        lblCliente4 = new javax.swing.JLabel();
+        lblNombreCliente = new javax.swing.JLabel();
+        btnEliminar = new javax.swing.JButton();
+        lblClienteTexto = new javax.swing.JLabel();
+        lblGravadoTexto = new javax.swing.JLabel();
+        lblExentoTexto = new javax.swing.JLabel();
+        lblSubtotalTexto = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        lblNombre.setText("Cliente:");
+
+        lblNombre1.setText("Producto:");
+
+        btnAceptar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnAceptar.setText("Aceptar");
+        btnAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAceptarActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(jTable1);
+
+        lblNombre3.setText("Cantidad:");
+
+        btnAgregarCantidad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Recursos/nuevo.png"))); // NOI18N
+        btnAgregarCantidad.setText("Agregar");
+        btnAgregarCantidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarCantidadActionPerformed(evt);
+            }
+        });
+
+        btnBusquedaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Recursos/buscar.png"))); // NOI18N
+        btnBusquedaCliente.setText("Busqueda");
+        btnBusquedaCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBusquedaClienteActionPerformed(evt);
+            }
+        });
+
+        lblNombre4.setText("Fecha:");
+
+        btnBusquedaProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Recursos/buscar.png"))); // NOI18N
+        btnBusquedaProducto.setText("Busqueda");
+        btnBusquedaProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBusquedaProductoActionPerformed(evt);
+            }
+        });
+
+        lblCliente.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblCliente.setText("Cliente:");
+
+        txtFecha.setEditable(false);
+
+        lblCliente1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCliente1.setText("Total:");
+
+        lblTotalTexto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblTotalTexto.setText("₡ 0");
+
+        lblCliente2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCliente2.setText("Exento:");
+
+        lblCliente3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCliente3.setText("Gravado:");
+
+        lblCliente4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCliente4.setText("Subtotal:");
+
+        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Recursos/eliminar.png"))); // NOI18N
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+
+        lblClienteTexto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblClienteTexto.setText("Sin Cliente");
+
+        lblGravadoTexto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblGravadoTexto.setText("₡ 0");
+
+        lblExentoTexto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblExentoTexto.setText("₡ 0");
+
+        lblSubtotalTexto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblSubtotalTexto.setText("₡ 0");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnBusquedaProducto))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBusquedaCliente))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblNombre4, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblNombre3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAgregarCantidad)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEliminar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblCliente1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(53, 53, 53)
+                                .addComponent(lblNombreCliente))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(37, 37, 37)
+                                .addComponent(lblTotalTexto))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCliente)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblCliente4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblCliente2)
+                                .addComponent(lblCliente3, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblClienteTexto)
+                            .addComponent(lblGravadoTexto)
+                            .addComponent(lblExentoTexto)
+                            .addComponent(lblSubtotalTexto))))
+                .addGap(77, 77, 77))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCancelar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(102, 102, 102))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(103, 103, 103)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNombre)
+                    .addComponent(btnBusquedaCliente)
+                    .addComponent(lblCliente)
+                    .addComponent(lblNombreCliente)
+                    .addComponent(lblClienteTexto))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblNombre4)
+                    .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCliente2)
+                    .addComponent(lblExentoTexto))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblGravadoTexto)
+                    .addComponent(lblCliente3))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCliente4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSubtotalTexto))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCliente1)
+                    .addComponent(lblTotalTexto))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBusquedaProducto)
+                    .addComponent(lblNombre1)
+                    .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregarCantidad)
+                    .addComponent(lblNombre3)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
+        // TODO add your handling code here:
+        FacturaLogica facturaLogica = new FacturaLogica();
+
+        Factura factura = new Factura();
+        factura.setCliente(cliente);
+
+        float exento = 0;
+        float gravado = 0;
+        float subTotal = 0;
+
+        for (int i = 0; i < detallesFactura.size(); i++) {
+
+            if (detallesFactura.get(i).getProducto().getImpuesto() <= 0) {
+                exento += detallesFactura.get(i).getTotal();
+                subTotal += detallesFactura.get(i).getTotal();
+            }
+
+            if (detallesFactura.get(i).getProducto().getImpuesto() > 0) {
+                subTotal += detallesFactura.get(i).getTotal();
+
+                gravado += detallesFactura.get(i).getTotal()
+                        * detallesFactura.get(i).getProducto().getImpuesto();
+            }
+        }
+        factura.setExento(exento);
+        LocalDate date = LocalDate.now();
+        factura.setFecha(date + "");
+        factura.setGravado(gravado);
+        factura.setSubtotal(subTotal);
+        factura.setTotal(subTotal + gravado);
+
+        facturaLogica.Crear(factura, detallesFactura);
+
+        this.setAceptar(true);
+        this.setVisible(false);
+        WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+    }//GEN-LAST:event_btnAceptarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        this.txtCliente.setText("");
+        this.setAceptar(false);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnAgregarCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCantidadActionPerformed
+        // TODO add your handling code here:
+        DetalleFactura detalleFactura = new DetalleFactura();
+        detalleFactura.setLinea(detallesFactura.size() + 1);
+        detalleFactura.setCantidad(Float.parseFloat(txtCantidad.getText()));
+        detalleFactura.setDescuento(0);
+        detalleFactura.setPrecio_unitario(this.producto.getPrecioUnitario());
+        detalleFactura.setTotal(Float.parseFloat(txtCantidad.getText()) * this.producto.getPrecioUnitario());
+        detalleFactura.setProducto(this.producto);
+        detallesFactura.add(detalleFactura);
+        this.CargarDatos();
+    }//GEN-LAST:event_btnAgregarCantidadActionPerformed
+
+    private void btnBusquedaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBusquedaClienteActionPerformed
+        // TODO add your handling code here:
+        Vista.Cliente.Buscar buscarCliente = new Vista.Cliente.Buscar();
+        buscarCliente.setVisible(true);
+        buscarCliente.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent ev) {
+                buscarCliente.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                buscarCliente.setVisible(false);
+                if (buscarCliente.isAceptar()) {
+                    cliente = buscarCliente.getCliente();
+                    txtCliente.setText(cliente.getId() + "");
+                    lblClienteTexto.setText(cliente.getNombre() + "");
+                }
+            }
+        });
+    }//GEN-LAST:event_btnBusquedaClienteActionPerformed
+
+    private void btnBusquedaProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBusquedaProductoActionPerformed
+        // TODO add your handling code here:
+        Vista.Producto.Buscar buscar = new Vista.Producto.Buscar();
+        buscar.setVisible(true);
+        buscar.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent ev) {
+                buscar.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                buscar.setVisible(false);
+                if (buscar.isAceptar()) {
+                    producto = buscar.getProducto();
+                    txtProducto.setText(producto.getId() + "");
+                }
+            }
+        });
+    }//GEN-LAST:event_btnBusquedaProductoActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        int selectRow = jTable1.getSelectedRow();
+        if (selectRow >= 0) {
+            int confirm = JOptionPane.showOptionDialog(this,
+                    "Seguro de eliminar el registro",
+                    "Confirmación", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (confirm == JOptionPane.YES_OPTION) {
+                int linea = Integer.valueOf(jTable1.getModel().getValueAt(selectRow, 0).toString());
+                for (int i = 0; i < detallesFactura.size(); i++) {
+                    if (detallesFactura.get(i).getLinea() == linea) {
+                        detallesFactura.remove(detallesFactura.get(i));
+                        break;
+                    }
+                }
+                List<DetalleFactura> temporal = new ArrayList<>();
+                for (int i = 0; i < detallesFactura.size(); i++) {
+                    DetalleFactura detalle = (DetalleFactura)detallesFactura.get(i);                    
+                    detalle.setLinea(i + 1);
+                    temporal.add(detalle);
+                }
+                detallesFactura.clear();
+                for (int i = 0; i < temporal.size(); i++) {
+                    detallesFactura.add(temporal.get(i));
+                }                
+
+                CargarDatos();
+            }
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Agregar().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAceptar;
+    private javax.swing.JButton btnAgregarCantidad;
+    private javax.swing.JButton btnBusquedaCliente;
+    private javax.swing.JButton btnBusquedaProducto;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lblCliente;
+    private javax.swing.JLabel lblCliente1;
+    private javax.swing.JLabel lblCliente2;
+    private javax.swing.JLabel lblCliente3;
+    private javax.swing.JLabel lblCliente4;
+    private javax.swing.JLabel lblClienteTexto;
+    private javax.swing.JLabel lblExentoTexto;
+    private javax.swing.JLabel lblGravadoTexto;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblNombre1;
+    private javax.swing.JLabel lblNombre3;
+    private javax.swing.JLabel lblNombre4;
+    private javax.swing.JLabel lblNombreCliente;
+    private javax.swing.JLabel lblSubtotalTexto;
+    private javax.swing.JLabel lblTotalTexto;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtCliente;
+    private javax.swing.JTextField txtFecha;
+    private javax.swing.JTextField txtProducto;
+    // End of variables declaration//GEN-END:variables
+}
